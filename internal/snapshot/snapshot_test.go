@@ -24,6 +24,13 @@ func TestNew_SetsTimestamp(t *testing.T) {
 	}
 }
 
+func TestNew_EmptyPorts(t *testing.T) {
+	s := New("localhost", []int{})
+	if len(s.Ports) != 0 {
+		t.Errorf("expected empty ports, got %v", s.Ports)
+	}
+}
+
 func TestContains(t *testing.T) {
 	s := New("localhost", []int{22, 80, 443})
 	if !s.Contains(80) {
