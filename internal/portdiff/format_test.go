@@ -64,3 +64,11 @@ func TestPrint_NilWriterUsesStdout(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+
+func TestPrint_UnknownFormat(t *testing.T) {
+	var buf bytes.Buffer
+	err := portdiff.Print(&buf, portdiff.Result{}, portdiff.Format("xml"))
+	if err == nil {
+		t.Fatal("expected error for unknown format, got nil")
+	}
+}
