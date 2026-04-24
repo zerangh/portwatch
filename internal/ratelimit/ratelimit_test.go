@@ -35,6 +35,15 @@ func TestReset_UnblocksKey(t *testing.T) {
 	}
 }
 
+func TestReset_UnknownKeyIsNoop(t *testing.T) {
+	l := ratelimit.New(10 * time.Second)
+	// Resetting a key that was never seen should not panic or affect behaviour.
+	l.Reset("unknown-host")
+	if !l.Allow("unknown-host") {
+		t.Fatal("expected first call after reset of unknown key to be allowed")
+	}
+}
+
 func TestWait_ContextCancelled(t *testing.T) {
 	l := ratelimit.New(10 * time.Second)
 	l.Allow("host-a")
