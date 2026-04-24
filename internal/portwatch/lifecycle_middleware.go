@@ -45,3 +45,15 @@ func UptimeMiddleware(w io.Writer) LifecycleHandler {
 		}
 	}
 }
+
+// ChainMiddleware combines multiple LifecycleHandlers into one, invoking
+// each handler in order for every event received.
+func ChainMiddleware(handlers ...LifecycleHandler) LifecycleHandler {
+	return func(ev LifecycleEvent, ts time.Time) {
+		for _, h := range handlers {
+			if h != nil {
+				h(ev, ts)
+			}
+		}
+	}
+}
