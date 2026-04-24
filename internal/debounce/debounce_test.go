@@ -62,3 +62,19 @@ func TestFlush_NothingPending(t *testing.T) {
 		t.Fatal("expected Flush to return false when nothing pending")
 	}
 }
+
+func TestCall_ReplacesCallback(t *testing.T) {
+	// Verify that a second Call before the delay fires only the latest callback.
+	d := debounce.New(80 * time.Millisecond)
+	var first, second int32
+	d.Call(func() { atomic.AddInt32(&first, 1) })
+	time.Sleep(20 * time.Millisecond)
+	d.Call(func() { atomic.AddInt32(&second, 1) })
+	time.Sleep(150 * time.Millisecond)
+	if got := atomic.LoadInt32(&first); got != 0 {
+		t.Fatalf("expected first callback to be replaced, got %d calls", got)
+	}
+	if got := atomic.LoadInt32(&second); got != 1 {
+		t.Fatalf("expected second callback to fire once, got %d calls", got)
+	}
+}
